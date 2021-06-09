@@ -36,3 +36,24 @@ jobs:
           days=`expr $target - $today`
           echo "$days days until $target_date"
           if (($days < 3000)); then exit 1; fi
+          
+      - name: Send mail
+        if: ${{ failure() }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          # Required mail server address:
+          server_address: smtp.sendgrid.net
+          # Required mail server port:
+          server_port: 465
+          # Required mail server username:
+          username: ${{secrets.MAIL_USERNAME}}
+          # Required mail server password:
+          password: ${{secrets.MAIL_PASSWORD}}
+          # Required mail subject:
+          subject: uild job of ${{github.repository}} completed FAIL!
+          # Required recipients' addresses:
+          to: kwltu@ogcio.gov.hk
+          # Required sender full name (address can be skipped):
+          from: Luke Skywalker # <user@example.com>
+          # Optional unsigned/invalid certificates allowance:
+          ignore_cert: true
