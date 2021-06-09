@@ -16,43 +16,33 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  hello:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    name: Check domain
+    strategy:
+      matrix:
+        domain:
+          - https://www.als.ogcio.gov.hk
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-          
-      - name: HTTP(s) URL health check and TLS/SSL certification expiry check
-        uses: padurean/https-certificate-expiry-health-check-action@v1.0.0
+      - name: Check domain SSL and registry expire date
+        id: check-domain
+        uses: codex-team/action-check-domain@v1
         with:
-          # Check the following URLs
-          url: https://www.als.ogcio.gov.hk
-          # Verify TLS certificate, defaults to "no" (port and max-cert-days-left are only used if this is set to "yes")
-          check-cert: yes
-          # Port is only used with check-cert "yes", otherwise it can be included in the URL
-          port: 443
-          # Max number of days till cert expiration; if this value is reached, the check will fail
-          # (only used with check-cert "yes")
-          max-cert-days-left: 600
-          # Follow redirects, or just report success on 3xx reponse status codes
-          follow-redirect: yes # Optional, defaults to "no"
-          # Fail this action after this many failed attempts
-          max-attempts: 3 # Optional, defaults to 1
-          # Delay between retries
-          retry-delay: 3s # Optional, only used if max-attempts > 1
+          url: ${{ matrix.domain }}
+
+      - name: Create an issue if paid till number is below limit 
+        if: ${{ steps.check-domain.outputs.paid-till-days-left && steps.check-domain.outputs.paid-till-days-left < 10 }}
+        uses: rishabhgupta/git-action-issue@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: ⚠️ ${{ matrix.domain }} — registry expiries in ${{ steps.check-domain.outputs.paid-till-days-left }} days
+          body: 'Paid till: `${{ steps.check-domain.outputs.paid-till-date }}`'
+
+      - name: Create an issue if SSL lifespan days number is below limit 
+        if: ${{ steps.check-domain.outputs.ssl-expire-days-left && steps.check-domain.outputs.ssl-expire-days-left < 10 }}
+        uses: rishabhgupta/git-action-issue@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: 🧨 ${{ matrix.domain }} — SSL cert expires in ${{ steps.check-domain.outputs.ssl-expire-days-left }} days
+          body: 'Valid till: `${{ steps.check-domain.outputs.ssl-expire-date }}`'
