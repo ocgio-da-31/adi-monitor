@@ -17,15 +17,16 @@ on:
   workflow_dispatch:
   
 jobs:
-  monitor:
-    name: SSL/TLS Monitor
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Monitor
-        uses: bluenovaio/action-tls-monitor@main
-        with: 
-          domain: www.als.ogcio.gov.hk
-          expiration_days: 99999
-          approved_protocols: TLSv1.2,TLSv1.3
-          alert_method: slack
-          alert_token: ${{ secrets.SLACK_WEBHOOK_URL }}
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: openssl s_client -connect www.als.ogcio.gov.hk:443 2>/dev/null | openssl x509 -noout -dates
