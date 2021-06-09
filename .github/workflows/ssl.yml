@@ -25,7 +25,7 @@ jobs:
         uses: bluenovaio/action-tls-monitor@main
         with: 
           domain: www.als.ogcio.gov.hk
-          expiration_days: 30
+          expiration_days: 99999
           approved_protocols: TLSv1.2,TLSv1.3
           alert_method: slack
           alert_token: ${{ secrets.SLACK_WEBHOOK_URL }}
