@@ -39,15 +39,13 @@ jobs:
           
       - name: Send mail
         if: ${{ failure() }}
-        uses: AlexisMateo/sendmail-action@5
+        uses: wadeww/send-email-action@master
         with:
-          smtp-server: smtp.sendgrid.net
-          smtp-server-port: 465
-          auth-user:  ${{secrets.MAIL_USERNAME}}
-          auth-password: ${{secrets.MAIL_PASSWORD}}
-          subject: uild job of ${{github.repository}} completed FAIL!
-          body: ${{github.context.payload}}
-          from: kwltu@ogcio.gov.hk
+          server_address: smtp.sendgrid.net
+          port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Workflow finished
+          body: Job completed ${{job.status}}
           to: kwltu@ogcio.gov.hk
-          is-tls: false
-          commit-message: true
+          from: kwltu@ogcio.gov.hk
