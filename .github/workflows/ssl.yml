@@ -42,7 +42,7 @@ jobs:
         uses: padurean/https-certificate-expiry-health-check-action@v1.0.0
         with:
           # Check the following URLs
-          url: https://www.als.ogcio.gov.hk|http://www.als.ogcio.gov.hk/
+          url: https://www.als.ogcio.gov.hk
           # Verify TLS certificate, defaults to "no" (port and max-cert-days-left are only used if this is set to "yes")
           check-cert: yes
           # Port is only used with check-cert "yes", otherwise it can be included in the URL
