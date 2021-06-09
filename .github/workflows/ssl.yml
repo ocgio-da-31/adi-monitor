@@ -45,7 +45,7 @@ jobs:
           port: 465
           username: ${{secrets.MAIL_USERNAME}}
           password: ${{secrets.MAIL_PASSWORD}}
-          subject: Workflow finished
-          body: Job completed ${{job.status}}
-          to: kwltu@ogcio.gov.hk
-          from: kwltu@ogcio.gov.hk
+          subject: Vaildate SSL failure, less then 3000 days
+          body: Job ${{job.status}}
+          to: ${{secrets.MAIL_TO}}
+          from: ${{secrets.MAIL_FROM}}
