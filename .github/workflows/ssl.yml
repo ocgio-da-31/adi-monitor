@@ -55,5 +55,7 @@ jobs:
           to: kwltu@ogcio.gov.hk
           # Required sender full name (address can be skipped):
           from: kwltu@ogcio.gov.hk
+          # Optional recipient of the email response:
+          reply_to: kwltu@ogcio.gov.hk
           # Optional unsigned/invalid certificates allowance:
           ignore_cert: true
