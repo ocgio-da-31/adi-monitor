@@ -35,17 +35,17 @@ jobs:
           target=`echo $(($(date --utc --date "$target_date" +%s)/86400))`
           days=`expr $target - $today`
           echo "$days days until $target_date"
-          if (($days < 3000)); then exit 1; fi
+          if (($days < 60)); then exit 1; fi
           
       - name: Send mail
         if: ${{ failure() }}
         uses: wadeww/send-email-action@master
         with:
-          server_address: smtp.sendgrid.net
-          port: 465
+          server_address: smtp.gmail.com
+          port: 587
           username: ${{secrets.MAIL_USERNAME}}
           password: ${{secrets.MAIL_PASSWORD}}
-          subject: Validate SSL failure, the ALS domain will expire less than 3000 days
+          subject: Validate SSL failure, the ALS domain will expire less than 60 days
           body: Job ${{job.status}}
           to: ${{secrets.MAIL_TO}}
           from: ${{secrets.MAIL_FROM}}
