@@ -1,0 +1,35 @@
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron:  '0 2 * * */1'
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: check ssl
+        run: |
+          result=`echo "oh" | openssl s_client -connect www.als.ogcio.gov.hk:443 2>/dev/null | openssl x509 -noout -dates | grep 'notAfter=' | cut  -f2 -d "="`
+          today=`echo $(($(date --utc --date "$1" +%s)/86400))`
+          target_date=`echo $(($(date --utc --date "$result" +%s)/86400))`
+          days=`expr $target_date - $today`
+          echo "$days days until $target_date"
+          if (($days < 60)); then exit 1; fi
+          
+      - name: send mail
+        if: ${{ failure() }}
+        uses: wadeww/send-email-action@master
+        with:
+          server_address: smtp.sendgrid.net
+          port: 587
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: ALS SSL fail, or the ALS domain will expire less than 60 days
+          body: Job ${{job.status}}
+          to: ${{secrets.MAIL_TO}}
+          from: ${{secrets.MAIL_FROM}}
