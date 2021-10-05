@@ -41,7 +41,7 @@ jobs:
         if: ${{ failure() }}
         uses: wadeww/send-email-action@master
         with:
-          server_address: smtp.gmail.com
+          server_address: smtp.sendgrid.net
           port: 587
           username: ${{secrets.MAIL_USERNAME}}
           password: ${{secrets.MAIL_PASSWORD}}
