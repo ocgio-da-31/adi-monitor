@@ -30,7 +30,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
-          target_date=`echo "oh" | openssl s_client -connect www.als.ewqcwqecogcio.gov.hk:443 2>/dev/null | openssl x509 -noout -dates | grep 'notAfter=' | cut  -f2 -d "="`
+          target_date=`echo "oh" | openssl s_client -connect www.als.ogcio.gov.hk:443 2>/dev/null | openssl x509 -noout -dates | grep 'notAfter=' | cut  -f2 -d "="`
           today=`echo $(($(date --utc --date "$1" +%s)/86400))`
           target=`echo $(($(date --utc --date "$target_date" +%s)/86400))`
           days=`expr $target - $today`
